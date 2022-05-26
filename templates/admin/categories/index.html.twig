@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer les catégories
+{% endblock %}
+
+{% block body %}
+	<h1>Gérer les categories</h1>
+	<div class="table-responsive">
+    <a href="{{path('admin_categories_add')}}" class="btn shadow-1 rounded-1 blue">Ajouter une catégorie</a>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Nom</th>
+					<th>Parent</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+            {% for categorie in categories %}
+				<tr>
+					<td>{{categorie.id}}</td>
+					<td>{{categorie.name}}</td>
+					<td>{{categorie.parent}}</td>
+					<td class="text-center">
+                        <a href="{{path('admin_categories_modify', {id: categorie.id}) }}" class="btn shadow-1 rounded-1 blue">Modifier</a>
+                        <a href="{{path('admin_categories_add')}}" class="btn shadow-1 rounded-1 blue">Supprimer</a>                    
+                    </td>
+				</tr>                
+            {% endfor %}
+			</tbody>
+		</table>
+        
+	</div>
+{% endblock %}
