@@ -49,6 +49,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $annonces;
 
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $firstname;
+
     public function __construct()
     {
         $this->annonces = new ArrayCollection();
@@ -181,6 +191,30 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
                 $annonce->setUsers(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(string $firstname): self
+    {
+        $this->firstname = $firstname;
 
         return $this;
     }
