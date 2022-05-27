@@ -60,7 +60,8 @@ class Annonces
     private $categories;
 
     /**
-     * @ORM\OneToMany(targetEntity=Images::class, mappedBy="annonces", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Images::class, mappedBy="annonces",
+     * orphanRemoval=true, cascade={"persist"})
      */
     private $images;
 
@@ -73,6 +74,11 @@ class Annonces
     {
         $this->images = new ArrayCollection();
         $this->favoris = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->images;
     }
 
     public function getId(): ?int
