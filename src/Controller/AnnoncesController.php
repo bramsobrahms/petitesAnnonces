@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -138,5 +139,57 @@ class AnnoncesController extends AbstractController
         }else {
             return new JsonResponse(['error' => 'Token Invalide'], 400);
         }
+    }
+
+    /**
+     * @Route("/details/{slug}", name="details")
+     */
+    public function details($slug, AnnoncesRepository $annoncesRepository)
+    {
+        $annonce = $annoncesRepository->findOneBy(['slug' => $slug]);
+
+        if(!$annonce){
+            throw new NotFoundHttpException('Pas d\'annonce trouvé');
+        }
+
+        return $this->render('annonces/details.html.twig', [
+            'annonce' => $annonce
+        ]);
+    }
+
+    /**
+     * @Route("/favoris/ajout/{id}", name="add_favoris")
+     */
+    public function addFavoris(Annonces $annonce, EntityManagerInterface $emi)
+    {
+
+        if(!$annonce){
+            throw new NotFoundHttpException('Pas d\'annonce trouvé');
+        }
+
+        $annonce->addFavori($this->getUser());
+
+        $emi->persist($annonce);
+        $emi->flush();
+
+        return $this->redirectToRoute('app_home');
+    }
+
+    /**
+     * @Route("/favoris/retrait/{id}", name="remove_favoris")
+     */
+    public function removeFavoris(Annonces $annonce, EntityManagerInterface $emi)
+    {
+
+        if(!$annonce){
+            throw new NotFoundHttpException('Pas d\'annonce trouvé');
+        }
+
+        $annonce->removeFavori($this->getUser());
+
+        $emi->persist($annonce);
+        $emi->flush();
+
+        return $this->redirectToRoute('app_home');
     }
 }

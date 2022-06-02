@@ -1,24 +1,55 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MainController!{% endblock %}
+{% block title %}Accueil
+{% endblock %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"/>
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+	<div class="container">
+		{% for annonce in annonces %}
+			<div class="card shadow-1 fx-row white">
+				<div class="primary d-flex vcenter fx-center p-4">
+					<img src="{{ asset('uploads/images/annonces/' ~ annonce.images[0].name) | imagine_filter('square') }}" alt="{{ annonce.title }}">
+				</div>
+				<div class="d-flex fx-col fx-grow">
+					<div class="card-header">
+						<a href="{{ path('details', {slug: annonce.slug})}}">{{ annonce.title }}</a>
+					</div>
+					<div class="card-content">
+						<p>Catégorie :
+							{{ annonce.categories.name }}</p>
+						<p>
+							{{ annonce.content |striptags | u.truncate(50, '...') }}
+						</p>
+						<div class="text-red">
+							{% if is_granted("ROLE_USER") %}
+								{% set isFavorite = false %}
+								{% for favoris in annonce.favoris %}
+									{% if favoris.id == app.user.id %}
+										{% set isFavorite = true %}
+									{% endif %}
+								{% endfor %}
+								{% if isFavorite %}
+									<a href="{{ path('remove_favoris', {id: annonce.id}) }}">
+										<i class="fas fa-heart"></i>
+									</a>
+								{% else %}
+									<a href="{{ path('add_favoris', {id: annonce.id}) }}">
+										<i class="far fa-heart"></i>
+									</a>
+								{% endif %}
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+							{% else %}
+								<i class="far fa-heart"></i>
+							{% endif %}
 
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success" role="alert">{{ message }}</div>
-    {% endfor %}
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/UwAmp/www/AppAnnonces/src/Controller/MainController.php'|file_link(0) }}">src/Controller/MainController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/UwAmp/www/AppAnnonces/templates/main/index.html.twig'|file_link(0) }}">templates/main/index.html.twig</a></code></li>
-    </ul>
-</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
 {% endblock %}
